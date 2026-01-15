@@ -56,6 +56,9 @@ pg1/
 │   └── supabase.ts               # Supabase client configuration
 ├── types/
 │   └── index.ts                  # TypeScript type definitions
+├── superbase/
+│   └── migrations/               # Database migration files
+│       └── 20260111143828_create_legal_portal_schema.sql
 └── public/                       # Static assets
 ```
 
@@ -92,45 +95,28 @@ pg1/
 
 4. **Set up Supabase Database**
    
-   Create the following tables in Supabase:
-
-   **blogs** table:
-   ```sql
-   create table blogs (
-     id uuid default uuid_generate_v4() primary key,
-     title text not null,
-     content text not null,
-     author text not null,
-     image_url text,
-     published boolean default false,
-     created_at timestamp with time zone default now(),
-     updated_at timestamp with time zone default now()
-   );
-   ```
-
-   **events** table:
-   ```sql
-   create table events (
-     id uuid default uuid_generate_v4() primary key,
-     title text not null,
-     description text not null,
-     event_date timestamp with time zone not null,
-     location text not null,
-     created_at timestamp with time zone default now()
-   );
-   ```
-
-   **judgments** table:
-   ```sql
-   create table judgments (
-     id uuid default uuid_generate_v4() primary key,
-     title text not null,
-     court text not null,
-     judgment_date date not null,
-     case_number text not null,
-     link text,
-     created_at timestamp with time zone default now()
-   );
+   Run the migration file to create all necessary tables with Row Level Security:
+   
+   - Navigate to your [Supabase Dashboard](https://app.supabase.com)
+   - Go to **SQL Editor**
+   - Copy and run the SQL from `superbase/migrations/20260111143828_create_legal_portal_schema.sql`
+   
+   This will create:
+   - **blogs** table (with RLS policies for public read, authenticated write)
+   - **events** table (with RLS policies for public read, authenticated write)
+   - **judgments** table (with RLS policies for public read, authenticated write)
+   
+   **Alternatively**, use the Supabase CLI:
+   ```bash
+   # Install Supabase CLI
+   npm install -g supabase
+   
+   # Initialize and link to your project
+   supabase init
+   supabase link --project-ref your-project-ref
+   
+   # Run migrations
+   supabase db push
    ```
 
 5. **Run the development server**
